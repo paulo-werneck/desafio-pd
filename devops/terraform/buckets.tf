@@ -8,7 +8,7 @@ resource "aws_s3_bucket" "raw" {
 }
 
 resource "aws_s3_bucket" "trusted" {
-  bucket = "passei-direto-datalake-raw-trusted"
+  bucket = "passei-direto-datalake-trusted-zone"
   acl    = "private"
 
   tags = {
@@ -17,7 +17,7 @@ resource "aws_s3_bucket" "trusted" {
 }
 
 resource "aws_s3_bucket" "refined" {
-  bucket = "passei-direto-datalake-raw-refined"
+  bucket = "passei-direto-datalake-refined-zone"
   acl    = "private"
 
   tags = {
@@ -26,7 +26,7 @@ resource "aws_s3_bucket" "refined" {
 }
 
 resource "aws_s3_bucket" "artifacts" {
-  bucket = "passei-direto-datalake-raw-artifacts"
+  bucket = "passei-direto-datalake-artifacts-zone"
   acl    = "private"
 
   tags = {
