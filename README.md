@@ -1,9 +1,9 @@
 ## Desafio - PD
 
 Este repositório contém a proposta de resolução do desafio de Data Engineer
+Toda a infraestrutura do projeto foi criada em cima de ambiente Cloud AWS
 
-
-1. Arquitetura
+<h3> 1. Arquitetura </h3>
 
 ![arquitetura_proposta](https://public-bkt-geral.s3.amazonaws.com/teste.png)
 
@@ -16,3 +16,57 @@ Este repositório contém a proposta de resolução do desafio de Data Engineer
 - Bucket S3 (Trusted Zone): Camada final, regras de negócios aplicadas, tabelas agregadas, dados pronto para consumo.
 
 - Redshift / Athena (Serving Layer): Camada de acesso ao dado disponibilizada ao usuário final. Não implementado, apenas ilustrativo.
+
+
+<h3> 2. Pré-requisitos </h3>
+
+Para posterior setup do projeto os seguintes softwares são necessários:
+
+- Terraform
+- AWS cli
+
+
+<h3> 3. Setup </h3>
+
+Na criação do ambiente foi utilizado a ferramenta "terraform", com isso, para "subir" a infraestutura favor seguir os passos abaixo, em sua ordem:
+
+    1 - git clone git@github.com:paulo-werneck/desafio-pd.git
+    2 - cd desafio-pd/devops/terraform/
+    3 - terraform init
+    4 - terraform plan -target=aws_s3_bucket.raw -var "profile_aws_cli=<Coloque aqui o nome do perfil referente ao AWS cli aonde a infra sera configurada>"
+    5 - terraform apply -target=aws_s3_bucket.raw -var "profile_aws_cli=<Coloque aqui o nome do perfil referente ao AWS cli aonde a infra sera configurada>" -auto-approve
+
+Até nesse momento apenas o "bucket raw" terá sido criado, para que o restante do processo funcione é necessário "subir"
+os datasets para esse bucket, nos seguintes endereços:
+
+ BASE A: s3://passei-direto-datalake-raw-zone/ <br> 
+ BASE B: s3://passei-direto-datalake-raw-zone/navigation/ 
+
+Continuando no setup:
+
+    6 - terraform plan -var "profile_aws_cli=<Coloque aqui o nome do perfil referente ao AWS cli aonde a infra sera configurada>"
+    7 - terraform apply -var "profile_aws_cli=<Coloque aqui o nome do perfil referente ao AWS cli aonde a infra sera configurada>" -auto-approve
+
+
+<h3> 4. Descrição dos serviços e finalidades </h3>
+
+O Terraform criará os seguintes serviços na AWS:
+
+- 3 IAM Policies
+  - Permissionamento do glue aos serviços
+
+- 1 IAM Role
+  - Permissionamento do glue aos serviços
+
+- 4 Buckets S3
+  - passei-direto-datalake-raw-zone: Zona Raw Data Lake
+  - passei-direto-datalake-trusted-zone: Zona Trusted Data Lake
+  - passei-direto-datalake-refined-zone: Zona Refined Data Lake
+  - passei-direto-datalake-artifacts-zone: Localização dos scripts do glue e outros possíveis artefatos
+  
+- 2 Jobs Glue
+  - raw_to_trusted: job spark para transformar os jsons em parquet e carregar na Trusted Zone  
+  - analysis_subscriptions: job em spark com as análises de negócio 
+
+- 9 Triggers Glue
+    - Gatilho para executar os jobs, passando a localização dos arquivos como parâmetro

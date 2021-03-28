@@ -105,3 +105,56 @@ resource "aws_glue_trigger" "trigger_universities" {
     }
   }
 }
+
+resource "aws_glue_trigger" "trigger_navigations" {
+  name = "raw_to_trusted-navigations"
+  type = "ON_DEMAND"
+
+  actions {
+    job_name = aws_glue_job.glue_job_raw_to_trusted.name
+    arguments = {
+      "--FILE_NAME" = "navigation_page_view",
+      "--FILE_PATH" = "s3://${aws_s3_bucket.raw.id}/navigation/"
+    }
+  }
+}
+
+
+
+###
+
+resource "aws_glue_job" "glue_job_analysis_subscriptions" {
+  name     = "job_analysis_subscription"
+  glue_version = "2.0"
+  worker_type = "Standard"
+  number_of_workers = 2
+  role_arn = "${aws_iam_role.role_glue.arn}"
+  depends_on = [aws_s3_bucket.artifacts]
+
+  command {
+    script_location = "s3://${aws_s3_bucket.artifacts.id}/analysis_subscriptions.py"
+  }
+
+  execution_property {
+    max_concurrent_runs = 10
+  }
+}
+
+resource "aws_glue_trigger" "trigger_analysis_subscriptions" {
+  name = "analysis_subscriptions"
+  type = "CONDITIONAL"
+
+  actions {
+    job_name = aws_glue_job.glue_job_analysis_subscriptions.name
+    arguments = {
+      "--FILE_PATH_STUDENTS" = "s3://${aws_s3_bucket.trusted.id}/students/",
+      "--FILE_PATH_SUBSCRIPTIONS" = "s3://${aws_s3_bucket.trusted.id}/subscriptions/"
+    }
+  }
+  predicate {
+    conditions {
+      job_name = aws_glue_job.glue_job_raw_to_trusted.name
+      state    = "SUCCEEDED"
+    }
+  }
+}
