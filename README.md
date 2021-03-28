@@ -71,3 +71,6 @@ O Terraform criará os seguintes serviços na AWS:
 
 - 9 Triggers Glue
     - Gatilho para executar os jobs, passando a localização dos arquivos como parâmetro
+
+- 1 Workflow Glue
+  - Para orquestração do pipeline
