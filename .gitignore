@@ -130,3 +130,7 @@ dmypy.json
 
 #paulo
 .terraform
+terraform.tfstate
+terraform.tfstate.backup
+terraform.tfstate
+.terraform.lock.hcl
