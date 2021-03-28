@@ -1,3 +1,7 @@
+resource "aws_glue_workflow" "workflow_analysis_subscriptions" {
+  name = "example"
+}
+
 resource "aws_glue_job" "glue_job_raw_to_trusted" {
   name     = "job_raw-to-trusted"
   glue_version = "2.0"
@@ -65,6 +69,7 @@ resource "aws_glue_trigger" "trigger_students" {
       "--FILE_PATH" = "s3://${aws_s3_bucket.raw.id}/students.json"
     }
   }
+  workflow_name = aws_glue_workflow.workflow_analysis_subscriptions.name
 }
 
 resource "aws_glue_trigger" "trigger_subjects" {
@@ -157,4 +162,5 @@ resource "aws_glue_trigger" "trigger_analysis_subscriptions" {
       state    = "SUCCEEDED"
     }
   }
+  workflow_name = aws_glue_workflow.workflow_analysis_subscriptions.name
 }

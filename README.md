@@ -46,6 +46,7 @@ Continuando no setup:
 
     6 - terraform plan -var "profile_aws_cli=<Coloque aqui o nome do perfil referente ao AWS cli aonde a infra sera configurada>"
     7 - terraform apply -var "profile_aws_cli=<Coloque aqui o nome do perfil referente ao AWS cli aonde a infra sera configurada>" -auto-approve
+    8 - executar o script contido em desafio-pd/scripts/athena_scripts/all_analysis.sql no athena (apenas para fins de checagem dos dados gerados pelas análises)
 
 
 <h3> 4. Descrição dos serviços e finalidades </h3>

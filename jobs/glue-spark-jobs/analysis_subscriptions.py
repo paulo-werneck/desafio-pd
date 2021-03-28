@@ -81,7 +81,7 @@ if __name__ == '__main__':
     subscriptions = read_parquet(file_path_subscriptions)
 
     d1 = subscriptions_per_type_month(df_subscriptions=subscriptions)
-    write_s3(data_frame=d1, s3_path='analysis_subscripts/subscriptions_per_type_month/')
+    write_s3(data_frame=d1, s3_path='analysis_subscriptions/subscriptions_per_type_month/')
 
     d2 = students_without_subscription(df_subscriptions=subscriptions, df_students=students)
-    write_s3(data_frame=d2, s3_path='analysis_subscripts/students_without_subscription')
+    write_s3(data_frame=d2, s3_path='analysis_subscriptions/students_without_subscription')
